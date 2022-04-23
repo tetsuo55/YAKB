@@ -13,7 +13,7 @@
 # Some Placeholders: [!] [*] [✓] [✗]
 
 # Default defconfig to use for builds.
-export CONFIG=dragonheart_defconfig
+export CONFIG=raphael_defconfig
 
 # Default directory where kernel is located in.
 KDIR=$(pwd)
@@ -23,23 +23,23 @@ export KDIR
 export LINKER="ld.lld"
 
 # Device name.
-export DEVICE="OnePlus 7 Series"
+export DEVICE="Xiaomi k20 pro"
 
 # Device codename.
-export CODENAME="op7"
+export CODENAME="raphael"
 
 # Builder name.
-export BUILDER="cyberknight777"
+export BUILDER="Tetsuo"
 
 # Kernel repository URL.
-export REPO_URL="https://github.com/cyberknight777/dragonheart_kernel_oneplus_sm8150"
+export REPO_URL="https://github.com/tetsuo55/android_kernel_xiaomi_sm8150"
 
 # Commit hash of HEAD.
 COMMIT_HASH=$(git rev-parse --short HEAD)
 export COMMIT_HASH
 
 # Telegram Information. Set 1 to enable. | Set 0 to disable.
-export TGI=1
+export TGI=0
 export CHATID=-1001361882613
 
 # Necessary variables to be exported.
@@ -118,8 +118,8 @@ elif [[ "${COMPILER}" = clang ]]; then
     )
 fi
 
-if [ ! -d "${KDIR}/anykernel3-dragonheart/" ]; then
-    git clone --depth=1 https://github.com/cyberknight777/anykernel3 -b op7 anykernel3-dragonheart
+if [ ! -d "${KDIR}/anykernel3/" ]; then
+    git clone --depth=1 https://github.com/tetsuo55/anykernel3 -b x3 anykernel3
 fi
 
 if [ "${ci}" != 1 ]; then
@@ -249,7 +249,7 @@ mod() {
     make "${MAKE[@]}" modules_prepare
     make -j"$PROCS" "${MAKE[@]}" modules INSTALL_MOD_PATH="${KDIR}"/out/modules
     make "${MAKE[@]}" modules_install INSTALL_MOD_PATH="${KDIR}"/out/modules
-    find "${KDIR}"/out/modules -type f -iname '*.ko' -exec cp {} "${KDIR}"/anykernel3-dragonheart/modules/system/lib/modules/ \;
+    find "${KDIR}"/out/modules -type f -iname '*.ko' -exec cp {} "${KDIR}"/anykernel3/modules/system/lib/modules/ \;
     echo -e "\n\e[1;32m[✓] Built Modules! \e[0m" | pv -qL 30
 }
 
@@ -259,12 +259,13 @@ mkzip() {
 	tg "*Building zip!*"
     fi
     echo -e "\n\e[1;93m[*] Building zip! \e[0m" | pv -qL 30
-    mv "${KDIR}"/out/arch/arm64/boot/dtbo.img "${KDIR}"/anykernel3-dragonheart
-    mv "${KDIR}"/out/arch/arm64/boot/dtb.img "${KDIR}"/anykernel3-dragonheart
-    mv "${KDIR}"/out/arch/arm64/boot/Image "${KDIR}"/anykernel3-dragonheart
-    cd "${KDIR}"/anykernel3-dragonheart || exit 1
+    mv "${KDIR}"/out/arch/arm64/boot/dtbo.img "${KDIR}"/anykernel3
+    mv "${KDIR}"/out/arch/arm64/boot/dtb.img "${KDIR}"/anykernel3
+    mv "${KDIR}"/out/arch/arm64/boot/Image "${KDIR}"/anykernel3
+    cd "${KDIR}"/anykernel3 || exit 1
     zip -r9 "$zipn".zip . -x ".git*" -x "README.md" -x "LICENSE" -x "*.zip"
     echo -e "\n\e[1;32m[✓] Built zip! \e[0m" | pv -qL 30
+    curl --upload-file "${zipn}" https://free.keep.sh
     if [[ "${TGI}" != "0" ]]; then
 	tgs "${zipn}.zip" "*#${kver} ${KBUILD_COMPILER_STRING}*"
     fi
@@ -280,14 +281,14 @@ obj() {
 
 # A function to uprev localversion in defconfig.
 upr() {
-    echo -e "\n\e[1;93m[*] Bumping localversion to -DragonHeart-${1}! \e[0m" | pv -qL 30
-    "${KDIR}"/scripts/config --file "${KDIR}"/arch/arm64/configs/$CONFIG --set-str CONFIG_LOCALVERSION "-DragonHeart-${1}"
+    echo -e "\n\e[1;93m[*] Bumping localversion to -Steroid-${1}! \e[0m" | pv -qL 30
+    "${KDIR}"/scripts/config --file "${KDIR}"/arch/arm64/configs/$CONFIG --set-str CONFIG_LOCALVERSION "-Steroid-${1}"
     rgn
     if [ "${ci}" != 1 ]; then
 	git add arch/arm64/configs/$CONFIG
-	git commit -S -s -m "dragonheart_defconfig: Bump to \`${1}\`"
+	git commit -S -s -m "raphael_defconfig: Bump to \`${1}\`"
     fi
-    echo -e "\n\e[1;32m[✓] Bumped localversion to -DragonHeart-${1}! \e[0m" | pv -qL 30
+    echo -e "\n\e[1;32m[✓] Bumped localversion to -Steroid-${1}! \e[0m" | pv -qL 30
 }
 
 # A function to showcase the options provided for args-based usage.
